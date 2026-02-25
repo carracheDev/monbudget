@@ -1,11 +1,10 @@
-
 class AppStrings {
-
   // ================= DASHBOARD =================
   static const String dashboardTitle = "Tableau de bord";
   static const String totalSolde = "Solde Total";
   static const String revenus = "Revenus";
   static const String depenses = "Dépenses";
+  static const String appTitle = "MonBudget";
 
   // ================= AUTH =================
   static const String login = "Connexion";
@@ -37,5 +36,4 @@ class AppStrings {
   static const String depense = "Dépense";
   static const String revenu = "Revenu";
   static const String transfert = "Transfert";
-
 }
