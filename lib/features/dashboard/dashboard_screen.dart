@@ -89,8 +89,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   _soldeVisible ? Icons.visibility : Icons.visibility_off,
                   color: AppColors.textSecondary,
                 ),
-                onPressed: () =>
-                    setState(() => _soldeVisible = !_soldeVisible),
+                onPressed: () => setState(() => _soldeVisible = !_soldeVisible),
               ),
             ],
           ),
@@ -150,8 +149,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: AppCard(
-            customBorderSide:
-                const BorderSide(color: AppColors.primary, width: 6),
+            customBorderSide: const BorderSide(
+              color: AppColors.primary,
+              width: 6,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -237,8 +238,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   child: AppFilterChip(
                     label: p,
                     isSelected: _periodeSelectionnee == p,
-                    onTap: () =>
-                        setState(() => _periodeSelectionnee = p),
+                    onTap: () => setState(() => _periodeSelectionnee = p),
                   ),
                 );
               }).toList(),
@@ -345,36 +345,40 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         transState.isLoading
             ? const CircularProgressIndicator(color: AppColors.primary)
             : transactions.isEmpty
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        children: [
-                          const Text('💸', style: TextStyle(fontSize: 48)),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Aucune transaction',
-                            style: AppTextStyles.labelSecondaire,
-                          ),
-                        ],
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      const Text('💸', style: TextStyle(fontSize: 48)),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Aucune transaction',
+                        style: AppTextStyles.labelSecondaire,
                       ),
-                    ),
-                  )
-                : Column(
-                    children: transactions.map((t) {
-                      return TransactionItem(
-                        title: t.description ?? t.categorieId,
-                        date: DateFormat('dd/MM/yyyy HH:mm').format(
-                          DateTime.parse(t.date),
-                        ),
-                        amount: t.montant,
-                        isIncome: t.type.name == 'REVENU',
-                        icon: t.type.name == 'REVENU'
-                            ? Icons.arrow_downward
-                            : Icons.arrow_upward,
-                      );
-                    }).toList(),
+                    ],
                   ),
+                ),
+              )
+            : Column(
+                children: transactions.map((t) {
+                  return TransactionItem(
+                    // ✅ Nom de la catégorie au lieu de UUID
+                    title: t.description ?? t.categorie?.nom ?? 'Transaction',
+                    date: DateFormat(
+                      'dd/MM HH:mm',
+                    ).format(DateTime.parse(t.date)),
+                    amount: t.montant,
+                    isIncome: t.type.name == 'REVENU',
+                    // ✅ Icône selon le type
+                    icon: t.type.name == 'REVENU'
+                        ? Icons.arrow_downward
+                        : t.type.name == 'TRANSFERT'
+                        ? Icons.swap_horiz
+                        : Icons.arrow_upward,
+                  );
+                }).toList(),
+              ),
       ],
     );
   }
@@ -407,17 +411,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-  onPressed: () {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const AddTransactionSheet(),
-    );
-  },
-  backgroundColor: AppColors.primary,
-  child: const Icon(Icons.add, color: Colors.white),
-),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => const AddTransactionSheet(),
+          );
+        },
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
     );
   }
 }

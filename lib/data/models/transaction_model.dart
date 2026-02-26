@@ -1,3 +1,5 @@
+import 'package:monbudget/data/models/categorie_model.dart';
+
 enum TransactionType { DEPENSE, REVENU, TRANSFERT }
 
 class TransactionModel {
@@ -11,6 +13,7 @@ class TransactionModel {
   final String categorieId;
   final String compteSourceId;
   final String dateCreation;
+  final CategorieModel? categorie;
 
   TransactionModel({
     required this.id,
@@ -23,6 +26,7 @@ class TransactionModel {
     required this.categorieId,
     required this.compteSourceId,
     required this.dateCreation,
+    this.categorie,
   });
 
   // ================= JSON → OBJECT =================
@@ -38,6 +42,9 @@ class TransactionModel {
       categorieId: json['categorieId'],
       compteSourceId: json['compteSourceId'],
       dateCreation: json['dateCreation'],
+      categorie: json['categorie'] != null 
+    ? CategorieModel.fromJson(json['categorie']) 
+    : null,
     );
   }
 
@@ -54,6 +61,7 @@ class TransactionModel {
       'categorieId': categorieId,
       'compteSourceId': compteSourceId,
       'dateCreation': dateCreation,
+      'categorie': categorie,
     };
   }
 }

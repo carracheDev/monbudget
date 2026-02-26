@@ -67,6 +67,73 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
     }
   }
 
+  void _showAddCategorieDialog() {
+  final nomController = TextEditingController();
+  final iconeController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(
+        'Nouvelle catégorie',
+        style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: iconeController,
+            decoration: InputDecoration(
+              labelText: 'Icône (emoji)',
+              hintText: '🛒',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: nomController,
+            decoration: InputDecoration(
+              labelText: 'Nom de la catégorie',
+              hintText: 'Ex: Courses',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Annuler'),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+          ),
+          onPressed: () async {
+            if (nomController.text.isNotEmpty) {
+              await ref.read(categorieProvider.notifier).createCategorie(
+                    nom: nomController.text,
+                    icone: iconeController.text.isEmpty
+                        ? '📦'
+                        : iconeController.text,
+                  );
+              if (mounted) Navigator.pop(context);
+            }
+          },
+          child: Text(
+            'Créer',
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     final categorieState = ref.watch(categorieProvider);
@@ -220,6 +287,32 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                       );
                     }).toList(),
                   ),
+
+                  // Après la liste des catégories
+GestureDetector(
+  onTap: () => _showAddCategorieDialog(),
+  child: Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    decoration: BoxDecoration(
+      border: Border.all(color: AppColors.primary),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.add, color: AppColors.primary, size: 16),
+        const SizedBox(width: 4),
+        Text(
+          'Nouvelle',
+          style: GoogleFonts.poppins(
+            color: AppColors.primary,
+            fontSize: 13,
+          ),
+        ),
+      ],
+    ),
+  ),
+),
             const SizedBox(height: 20),
 
             // Description
