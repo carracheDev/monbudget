@@ -6,12 +6,20 @@ class AppCard extends StatelessWidget {
   final VoidCallback? onTap;
   final Color? color;
 
+  // 🔥 NOUVEAUX PARAMÈTRES OPTIONNELS
+  final Color? borderColor;
+  final double borderWidth;
+  final BorderSide? customBorderSide;
+
   const AppCard({
     super.key,
     required this.child,
     this.padding,
     this.onTap,
     this.color,
+    this.borderColor,
+    this.borderWidth = 4,
+    this.customBorderSide,
   });
 
   @override
@@ -23,32 +31,31 @@ class AppCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: padding ?? const EdgeInsets.all(16),
-          child: child,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: customBorderSide != null
+              ? Border(
+                  left: customBorderSide!,
+                )
+              : borderColor != null
+                  ? Border(
+                      left: BorderSide(
+                        color: borderColor!,
+                        width: borderWidth,
+                      ),
+                    )
+                  : null,
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Padding(
+            padding: padding ?? const EdgeInsets.all(16),
+            child: child,
+          ),
         ),
       ),
     );
   }
 }
-
-
-/*
-// Carte solde
-AppCard(
-  child: Column(
-    children: [
-      Text("Solde Actuel"),
-      Text("125 450 F"),
-    ],
-  ),
-)
-
-// Carte cliquable
-AppCard(
-  onTap: () => naviguer(),
-  child: Text("Budget Alimentation"),
-) */

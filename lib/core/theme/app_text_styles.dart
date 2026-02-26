@@ -33,7 +33,7 @@ class AppTextStyles {
 
   // Label secondaire
   static TextStyle get labelSecondaire => GoogleFonts.poppins(
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
   );

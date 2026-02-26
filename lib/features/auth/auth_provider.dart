@@ -4,6 +4,7 @@ import 'package:monbudget/core/config/providers.dart';
 import 'package:monbudget/core/constants/app_constants.dart';
 import 'package:monbudget/data/models/user_model.dart';
 import 'package:monbudget/data/repositories/auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ================= AUTH STATE =================
 class AuthState {
@@ -63,11 +64,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
         value: data['refreshToken'],
       );
 
+      // Sauvegarder le user dans SharedPreferences
+      final user = UserModel.fromJson(data['user']);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_nom', user.nomComplet);
+      await prefs.setString('user_email', user.email);
+      await prefs.setString('user_id', user.id);
+
       // Mettre à jour l'état
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
-        user: UserModel.fromJson(data['user']),
+        user: user,
       );
     } catch (e) {
       state = state.copyWith(
@@ -110,6 +118,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     } finally {
       await _storage.deleteAll();
+      // Supprimer aussi les prefs
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('user_nom');
+      await prefs.remove('user_email');
+      await prefs.remove('user_id');
       state = AuthState();
     }
   }
@@ -118,7 +131,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> checkAuth() async {
     final token = await _storage.read(key: AppConstants.keyAccessToken);
     if (token != null) {
-      state = state.copyWith(isAuthenticated: true);
+      final prefs = await SharedPreferences.getInstance();
+      final nom = prefs.getString('user_nom');
+      final email = prefs.getString('user_email');
+      final id = prefs.getString('user_id');
+
+      if (nom != null && email != null && id != null) {
+        state = state.copyWith(
+          isAuthenticated: true,
+          user: UserModel(id: id, nomComplet: nom, email: email),
+        );
+      }
     }
   }
 }

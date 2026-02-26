@@ -53,13 +53,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     switch (type) {
       case HeaderType.hamburger:
         return IconButton(
-          icon: const Icon(Icons.menu),
+          icon: const Icon(Icons.menu, color: Colors.white,),
           onPressed: onMenuTap,
         );
       case HeaderType.back:
       case HeaderType.action:
         return IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white,),
           onPressed: onBackTap ?? () => Navigator.pop(context),
         );
     }
@@ -72,7 +72,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           Stack(
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_none),
+                icon: const Icon(Icons.notifications_none, color: Colors.white,),
                 onPressed: onNotificationTap,
               ),
               // Badge rouge si notifications non lues
@@ -102,7 +102,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       case HeaderType.action:
         return [
           IconButton(
-            icon: Icon(actionIcon ?? Icons.more_vert),
+            icon: Icon(actionIcon ?? Icons.more_vert , color: Colors.white,),
             onPressed: onActionTap,
           ),
         ];
