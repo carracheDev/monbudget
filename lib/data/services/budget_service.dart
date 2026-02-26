@@ -36,7 +36,7 @@ class BudgetService {
   final response = await _apiClient.dio.patch(
     '/budgets/$budgetId',
     data: {
-      if (montantLimite != null) 'montantLimite': montantLimite,
+      'montantLimite': ?montantLimite,
     },
   );
   return BudgetModel.fromJson(response.data);

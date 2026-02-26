@@ -34,7 +34,7 @@ class CategorieService {
   ) async {
     final response = await _apiClient.dio.patch(
       '/categories/$categorieId',
-      data: {if (nom != null) 'nom': nom},
+      data: {'nom': ?nom},
     );
     return CategorieModel.fromJson(response.data);
   }

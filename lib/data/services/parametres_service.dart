@@ -24,13 +24,11 @@ class ParametresService {
   final response = await _apiClient.dio.patch(
     '/parametres',
     data: {
-      if (theme != null) 'theme': theme,
-      if (langue != null) 'langue': langue,
-      if (biometrie != null) 'biometrie': biometrie,
-      if (notificationsPush != null)
-        'notificationsPush': notificationsPush,
-      if (notificationsEmail != null)
-        'notificationsEmail': notificationsEmail,
+      'theme': ?theme,
+      'langue': ?langue,
+      'biometrie': ?biometrie,
+      'notificationsPush': ?notificationsPush,
+      'notificationsEmail': ?notificationsEmail,
     },
   );
 

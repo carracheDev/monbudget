@@ -34,7 +34,7 @@ class CompteService {
   }) async {
     final response = await _apiClient.dio.patch(
       '/comptes/$compteId',
-      data: {if (nom != null) 'nom': nom},
+      data: {'nom': ?nom},
     );
     return CompteModel.fromJson(response.data);
   }

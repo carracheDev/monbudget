@@ -38,7 +38,7 @@ class PortefeuilleService {
       data: {
         'montant': montant,
         'compteId': compteId,
-        if (description != null) 'description': description,
+        'description': ?description,
       },
     );
 

@@ -18,37 +18,37 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  SizedBox(
-      width: double.infinity,// pleine largeur
+    return SizedBox(
+      width: double.infinity, // pleine largeur
       height: 52,
       child: ElevatedButton(
-        onPressed: isLoading? null:onPressed, 
+        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isOutlined? Colors.white:AppColors.primary,
-          foregroundColor: isOutlined? AppColors.primary: Colors.white,
+          backgroundColor: isOutlined ? Colors.white : AppColors.primary,
+          foregroundColor: isOutlined ? AppColors.primary : Colors.white,
           disabledBackgroundColor: Colors.grey.shade300,
-          side: isOutlined ? const BorderSide(color: AppColors.primary):null,
+          side: isOutlined ? const BorderSide(color: AppColors.primary) : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
         child: isLoading
-        ? const SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 2,
-          ),
-        )
-        :Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        )
-        ),
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+      ),
     );
   }
 }

@@ -4,7 +4,12 @@ class AppStrings {
   static const String totalSolde = "Solde Total";
   static const String revenus = "Revenus";
   static const String depenses = "Dépenses";
-  static const String appTitle = "MonBudget";
+
+    // ================= splash =================
+
+  static const String appName = "MonBudget";
+  static const String appTagline = 'Gérez votre argent intelligemment';
+
 
   // ================= AUTH =================
   static const String login = "Connexion";

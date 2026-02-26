@@ -30,7 +30,7 @@ class TransactionService {
         'montant': montant,
         'type': type,
         'categorieId': categorieId,
-        if (description != null) 'description': description,
+        'description': ?description,
       },
     );
     return TransactionModel.fromJson(response.data);
