@@ -182,8 +182,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     // Grouper par categorieId
     final Map<String, double> parCategorie = {};
     for (final t in depenses) {
-      parCategorie[t.categorieId] =
-          (parCategorie[t.categorieId] ?? 0) + t.montant;
+      final nom = t.categorie?.nom ?? 'Autre';
+      parCategorie[nom] = (parCategorie[nom] ?? 0) + t.montant;
     }
 
     final total = parCategorie.values.fold(0.0, (a, b) => a + b);
@@ -363,19 +363,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             : Column(
                 children: transactions.map((t) {
                   return TransactionItem(
-                    // ✅ Nom de la catégorie au lieu de UUID
                     title: t.description ?? t.categorie?.nom ?? 'Transaction',
                     date: DateFormat(
                       'dd/MM HH:mm',
                     ).format(DateTime.parse(t.date)),
                     amount: t.montant,
                     isIncome: t.type.name == 'REVENU',
-                    // ✅ Icône selon le type
-                    icon: t.type.name == 'REVENU'
-                        ? Icons.arrow_downward
-                        : t.type.name == 'TRANSFERT'
-                        ? Icons.swap_horiz
-                        : Icons.arrow_upward,
+                    emoji: t.categorie?.icone, icon: null, // ← icône emoji de la catégorie
                   );
                 }).toList(),
               ),

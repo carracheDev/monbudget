@@ -5,7 +5,8 @@ class TransactionItem extends StatelessWidget {
   final String date;
   final double amount;
   final bool isIncome;
-  final IconData icon;
+  final String? emoji;
+  final IconData? icon;
   final VoidCallback? onTap;
 
   const TransactionItem({
@@ -15,6 +16,7 @@ class TransactionItem extends StatelessWidget {
     required this.amount,
     required this.isIncome,
     required this.icon,
+    required this.emoji,
     this.onTap,
   });
 
@@ -36,7 +38,7 @@ class TransactionItem extends StatelessWidget {
               color: Colors.black.withOpacity(0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -48,11 +50,9 @@ class TransactionItem extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              child: emoji != null
+                  ? Text(emoji!, style: const TextStyle(fontSize: 24))
+                  : Icon(icon, color: color, size: 24),
             ),
 
             const SizedBox(width: 12),
@@ -72,10 +72,7 @@ class TransactionItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     date,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                   ),
                 ],
               ),
