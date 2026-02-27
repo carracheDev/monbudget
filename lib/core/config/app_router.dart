@@ -4,7 +4,6 @@ import 'package:monbudget/features/auth/login_screen.dart';
 import 'package:monbudget/features/auth/onboarding_screen.dart';
 import 'package:monbudget/features/auth/register_screen.dart';
 import 'package:monbudget/features/auth/splash_screen.dart';
-import 'package:monbudget/features/dashboard/dashboard_screen.dart';
 import 'package:monbudget/shared/components/main_screen.dart';
 
 final appRouter =  GoRouter(

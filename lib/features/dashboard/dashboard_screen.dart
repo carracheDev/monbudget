@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -329,7 +330,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                context.go('/transactions');
+              },
               child: Text(
                 'Voir tout',
                 style: GoogleFonts.poppins(
@@ -369,7 +372,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ).format(DateTime.parse(t.date)),
                     amount: t.montant,
                     isIncome: t.type.name == 'REVENU',
-                    emoji: t.categorie?.icone, icon: null, // ← icône emoji de la catégorie
+                    emoji: t.categorie?.icone,
+                    icon: null, // ← icône emoji de la catégorie
                   );
                 }).toList(),
               ),
