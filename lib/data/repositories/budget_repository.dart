@@ -9,11 +9,13 @@ class BudgetRepository {
   Future<BudgetModel> createBudgets({
     required double montantLimite,
     required BudgetPeriode periode,
+    required String categorieId,
   }) async {
     try {
       return await _budgetService.createBudgets(
         montantLimite: montantLimite,
         periode: periode,
+        categorieId: categorieId,
       );
     } on DioException catch (e) {
       throw Exception(
@@ -56,7 +58,7 @@ class BudgetRepository {
       return await _budgetService.updateBudgets(
         budgetId: budgetId,
         montantLimite: montantLimite,
-        );
+      );
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Erreur de modification');
     } catch (e) {

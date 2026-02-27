@@ -1,6 +1,6 @@
 import 'package:monbudget/data/models/categorie_model.dart';
 
-enum BudgetPeriode { MENSUEL, HEBDOMADAIRE, ANNUEL }
+enum BudgetPeriode { MENSUEL, HEBDOMADAIRE, TRIMESTRIEL, ANNUEL }
 
 class BudgetModel {
   final String id;
@@ -24,19 +24,22 @@ class BudgetModel {
   });
 
   factory BudgetModel.fromJson(Map<String, dynamic> json) {
-    return BudgetModel(
-      id: json['id'],
-      montantLimite: (json['montantLimite'] as num).toDouble(),
-      periode: BudgetPeriode.values.firstWhere(
-        (e) => e.name == json['periode'],
-      ),
-      alerteSeuil: (json['alerteSeuil'] as num).toDouble(),
-      alerteEnvoyee: json['alerteEnvoyee'],
-      estActif: json['estActif'],
-      categorieId: json['categorieId'],
-      categorie: json['categorie'],
-    );
-  }
+  return BudgetModel(
+    id: json['id'],
+    montantLimite: (json['montantLimite'] as num).toDouble(),
+    periode: BudgetPeriode.values.firstWhere(
+      (e) => e.name == json['periode'],
+    ),
+    alerteSeuil: (json['alerteSeuil'] as num).toDouble(),
+    alerteEnvoyee: json['alerteEnvoyee'],
+    estActif: json['estActif'],
+    categorieId: json['categorieId'],
+    // ✅ CORRECTION ICI
+    categorie: json['categorie'] != null
+        ? CategorieModel.fromJson(json['categorie'])
+        : null,
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {

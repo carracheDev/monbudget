@@ -9,11 +9,7 @@ class BudgetsState {
   final bool isLoading;
   final String? error;
 
-  BudgetsState({
-    this.budgets = const [],
-    this.isLoading = false,
-    this.error,
-  });
+  BudgetsState({this.budgets = const [], this.isLoading = false, this.error});
 
   BudgetsState copyWith({
     List<BudgetModel>? budgets,
@@ -45,12 +41,14 @@ class BudgetsNotifier extends StateNotifier<BudgetsState> {
   }
 
   Future<void> createBudget({
+    required String categorieId,
     required double montantLimite,
     required BudgetPeriode periode,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _budgetRepository.createBudgets(
+        categorieId: categorieId,
         montantLimite: montantLimite,
         periode: periode,
       );
@@ -72,8 +70,9 @@ class BudgetsNotifier extends StateNotifier<BudgetsState> {
 }
 
 // ================= PROVIDER =================
-final budgetsProvider =
-    StateNotifierProvider<BudgetsNotifier, BudgetsState>((ref) {
+final budgetsProvider = StateNotifierProvider<BudgetsNotifier, BudgetsState>((
+  ref,
+) {
   final budgetRepository = ref.read(budgetRepositoryProvider);
   return BudgetsNotifier(budgetRepository);
 });

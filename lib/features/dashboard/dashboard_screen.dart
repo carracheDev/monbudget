@@ -11,6 +11,7 @@ import 'package:monbudget/features/auth/auth_provider.dart';
 import 'package:monbudget/features/comptes/compte_provider.dart';
 import 'package:monbudget/features/transactions/add_transaction_sheet.dart';
 import 'package:monbudget/features/transactions/transactions_provider.dart';
+import 'package:monbudget/shared/components/main_screen.dart';
 import 'package:monbudget/shared/widgets/app_card.dart';
 import 'package:monbudget/shared/widgets/app_header.dart';
 import 'package:monbudget/shared/widgets/filter_chip.dart';
@@ -331,7 +332,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
             TextButton(
               onPressed: () {
-                context.go('/transactions');
+                ref.read(bottomNavIndexProvider.notifier).state = 1;
               },
               child: Text(
                 'Voir tout',
