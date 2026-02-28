@@ -37,8 +37,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Déconnexion',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        title: Text(
+          'Déconnexion',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
         content: Text(
           'Êtes-vous sûr de vouloir vous déconnecter ?',
           style: GoogleFonts.poppins(color: Colors.grey),
@@ -46,20 +48,23 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annuler',
-                style: GoogleFonts.poppins(color: Colors.grey)),
+            child: Text(
+              'Annuler',
+              style: GoogleFonts.poppins(color: Colors.grey),
+            ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
             onPressed: () async {
               Navigator.pop(context);
               Navigator.pop(context);
               await ref.read(authProvider.notifier).logout();
               if (mounted) context.go('/login');
             },
-            child: Text('Confirmer',
-                style: GoogleFonts.poppins(color: Colors.white)),
+            child: Text(
+              'Confirmer',
+              style: GoogleFonts.poppins(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -73,10 +78,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
     bool isActive = false,
   }) {
     return ListTile(
-      leading: Icon(
-        icon,
-        color: isActive ? AppColors.primary : Colors.grey,
-      ),
+      leading: Icon(icon, color: isActive ? AppColors.primary : Colors.grey),
       title: Text(
         label,
         style: GoogleFonts.poppins(
@@ -88,9 +90,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
       tileColor: isActive
           ? AppColors.primary.withOpacity(0.08)
           : Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onTap: onTap,
     );
   }
@@ -111,9 +111,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-              ),
+              decoration: const BoxDecoration(color: AppColors.primary),
               child: Column(
                 children: [
                   // Bouton fermer + Logo
@@ -190,8 +188,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
             // ===== NAVIGATION =====
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: Column(
                   children: [
                     _buildItem(
@@ -222,13 +219,13 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       icon: Icons.savings_outlined,
                       label: 'Épargne',
                       isActive: false,
-                      onTap: () {},
+                      onTap: ()=> context.push('/epargne'),
                     ),
                     _buildItem(
                       icon: Icons.wallet_outlined,
                       label: 'Portefeuille',
                       isActive: false,
-                      onTap: () {},
+                      onTap: () => context.push('/portefeuille'),
                     ),
                     _buildItem(
                       icon: Icons.description_outlined,
@@ -251,10 +248,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: ListTile(
-                leading: const Icon(
-                  Icons.logout,
-                  color: AppColors.primary,
-                ),
+                leading: const Icon(Icons.logout, color: AppColors.primary),
                 title: Text(
                   'Se déconnecter',
                   style: GoogleFonts.poppins(

@@ -6,20 +6,27 @@ class EpargneService {
   EpargneService(this._apiClient);
 
   Future<List<EpargneModel>> getObjectifs() async {
-    final response = await _apiClient.dio.get('/epargne');
-    return (response.data as List)
-        .map((item) => EpargneModel.fromJson(item))
-        .toList();
-  }
+  final response = await _apiClient.dio.get('/epargne');
+  print('📦 EPARGNE DATA: ${response.data}');
+  return (response.data as List)
+      .map((item) => EpargneModel.fromJson(item))
+      .toList();
+}
 
   Future<EpargneModel> createObjectif({
     required String nom,
     required String icone,
     required double montantCible,
+    required DateTime dateEcheance,
   }) async {
     final response = await _apiClient.dio.post(
       '/epargne',
-      data: {'nom': nom, 'icone': icone, 'montantCible': montantCible},
+      data: {
+        'nom': nom,
+        'icone': icone,
+        'montantCible': montantCible,
+        'dateEcheance': dateEcheance.toIso8601String(),
+      },
     );
     return EpargneModel.fromJson(response.data);
   }

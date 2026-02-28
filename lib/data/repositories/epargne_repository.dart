@@ -23,12 +23,14 @@ class EpargneRepository {
     required String nom,
     required String icone,
     required double montantCible,
+    required DateTime dateEcheance,
   }) async {
     try {
       return await _epargneService.createObjectif(
         nom: nom,
         icone: icone,
         montantCible: montantCible,
+        dateEcheance: dateEcheance,
       );
     } on DioException catch (e) {
       throw Exception(

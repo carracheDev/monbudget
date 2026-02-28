@@ -1,4 +1,4 @@
-enum EpargneStatut { EN_COURS, TERMINEE, ANNULEE }
+enum EpargneStatut { ACTIF, TERMINE, ARCHIVE }
 
 class EpargneModel {
   final String id;
