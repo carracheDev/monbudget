@@ -1,6 +1,6 @@
 class AppConstants {
   // URL de base de l'API
-static const String baseUrl = 'http://10.104.2.47:3000';
+static const String baseUrl = 'http://10.213.213.47:3000';
 
   //Clées de stockage local
   static const String keyAccessToken = 'access_token';

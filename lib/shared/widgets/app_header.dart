@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:monbudget/core/constants/app_colors.dart';
+import 'package:monbudget/features/notifications/notification_provider.dart';
 
 enum HeaderType {
   hamburger, // ≡ + titre + cloche
@@ -53,13 +55,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     switch (type) {
       case HeaderType.hamburger:
         return IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white,),
+          icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: onMenuTap,
         );
       case HeaderType.back:
       case HeaderType.action:
         return IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white,),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: onBackTap ?? () => Navigator.pop(context),
         );
     }
@@ -69,44 +71,68 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     switch (type) {
       case HeaderType.hamburger:
         return [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications_none, color: Colors.white,),
-                onPressed: onNotificationTap,
-              ),
-              // Badge rouge si notifications non lues
-              if (notificationCount != null && notificationCount! > 0)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
+          Consumer(
+            builder: (context, ref, _) {
+              final nonLues = ref
+                  .watch(notificationProvider)
+                  .notifications
+                  .where((n) => !n.estLu)
+                  .length;
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_outlined,
                       color: Colors.white,
-                      shape: BoxShape.circle,
                     ),
-                    child: Text(
-                      '$notificationCount',
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                    onPressed: onNotificationTap,
+                  ),
+                  if (nonLues > 0)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: Colors.yellow,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            nonLues > 9 ? '9+' : '$nonLues',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-            ],
+                ],
+              );
+            },
           ),
         ];
       case HeaderType.action:
         return [
           IconButton(
-            icon: Icon(actionIcon ?? Icons.more_vert , color: Colors.white,),
+            icon: Icon(actionIcon ?? Icons.more_vert, color: Colors.white),
             onPressed: onActionTap,
           ),
         ];
       case HeaderType.back:
+        // ✅ Afficher actionIcon si fourni
+        if (actionIcon != null) {
+          return [
+            IconButton(
+              icon: Icon(actionIcon!, color: Colors.white),
+              onPressed: onActionTap,
+            ),
+          ];
+        }
         return [];
     }
   }

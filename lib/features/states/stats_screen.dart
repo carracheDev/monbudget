@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:monbudget/core/constants/app_colors.dart';
@@ -77,10 +78,13 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
               ),
             ),
             const SizedBox(height: 6),
-            Container(height: 3, decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(2),
-            )),
+            Container(
+              height: 3,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
           ],
         ),
       ),
@@ -166,10 +170,8 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  getDrawingHorizontalLine: (value) => FlLine(
-                    color: Colors.grey.shade200,
-                    strokeWidth: 1,
-                  ),
+                  getDrawingHorizontalLine: (value) =>
+                      FlLine(color: Colors.grey.shade200, strokeWidth: 1),
                 ),
                 borderData: FlBorderData(show: false),
                 titlesData: FlTitlesData(
@@ -240,13 +242,18 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       parCategorie[nom]!['montant'] += t.montant;
     }
 
-    final total = parCategorie.values
-        .fold(0.0, (sum, v) => sum + (v['montant'] as double));
+    final total = parCategorie.values.fold(
+      0.0,
+      (sum, v) => sum + (v['montant'] as double),
+    );
 
     // Trier par montant décroissant
     final sorted = parCategorie.entries.toList()
-      ..sort((a, b) => (b.value['montant'] as double)
-          .compareTo(a.value['montant'] as double));
+      ..sort(
+        (a, b) => (b.value['montant'] as double).compareTo(
+          a.value['montant'] as double,
+        ),
+      );
 
     return AppCard(
       child: Column(
@@ -262,8 +269,10 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
           const SizedBox(height: 16),
           if (sorted.isEmpty)
             Center(
-              child: Text('Aucune dépense',
-                  style: AppTextStyles.labelSecondaire),
+              child: Text(
+                'Aucune dépense',
+                style: AppTextStyles.labelSecondaire,
+              ),
             )
           else
             ...sorted.take(5).map((entry) {
@@ -277,8 +286,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
                   children: [
                     Row(
                       children: [
-                        Text(icone,
-                            style: const TextStyle(fontSize: 20)),
+                        Text(icone, style: const TextStyle(fontSize: 20)),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -329,7 +337,9 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
       appBar: AppHeader(
         title: 'Statistiques',
         type: HeaderType.hamburger,
-        onNotificationTap: () {},
+        // Dans dashboard, transactions, etc.
+        onNotificationTap: () => context.push('/notifications'),
+        onMenuTap: () => Scaffold.of(context).openDrawer(),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

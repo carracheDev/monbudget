@@ -3,16 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:monbudget/core/constants/app_colors.dart';
 import 'package:monbudget/features/budgets/budget_screen.dart';
 import 'package:monbudget/features/dashboard/dashboard_screen.dart';
+import 'package:monbudget/features/notifications/notification_provider.dart';
 import 'package:monbudget/features/profil/profil_screen.dart';
 import 'package:monbudget/features/states/stats_screen.dart';
 import 'package:monbudget/features/transactions/transactions_screen.dart';
+import 'package:monbudget/shared/widgets/app_drawer.dart';
 
-// ✅ Provider en dehors de la classe
 final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 
-class MainScreen extends ConsumerWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
+  @override
+  ConsumerState<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
   static const List<Widget> _pages = [
     DashboardScreen(),
     TransactionsScreen(),
@@ -22,11 +28,20 @@ class MainScreen extends ConsumerWidget {
   ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // ✅ Dans build() — pas dans la classe directement
+  void initState() {
+    super.initState();
+    // ✅ Charger les notifications au démarrage → badge fonctionne
+    Future.microtask(() {
+      ref.read(notificationProvider.notifier).getNotifications();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentIndex = ref.watch(bottomNavIndexProvider);
 
     return Scaffold(
+      drawer: const AppDrawer(),
       body: IndexedStack(
         index: currentIndex,
         children: _pages,
@@ -43,7 +58,6 @@ class MainScreen extends ConsumerWidget {
           fontSize: 12,
         ),
         unselectedLabelStyle: const TextStyle(fontSize: 12),
-        // ✅ Met à jour le provider au lieu de setState
         onTap: (index) =>
             ref.read(bottomNavIndexProvider.notifier).state = index,
         items: const [

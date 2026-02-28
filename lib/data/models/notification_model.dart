@@ -23,8 +23,12 @@ class NotificationModel {
       id: json['id'],
       titre: json['titre'],
       message: json['message'],
-      type: NotificationType.values.firstWhere((e) => e.name == json['type']),
-      estLu: json['estLu'],
+      type: NotificationType.values.firstWhere(
+        (e) => e.name == json['type'],
+        orElse: () => NotificationType.SYSTEME,
+      ),
+      estLu: json['estLu'] ?? false,
+      // ✅ dateCreation pas createdAt
       dateCreation: DateTime.parse(json['dateCreation']),
     );
   }

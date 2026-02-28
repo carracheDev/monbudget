@@ -32,21 +32,33 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   final NotificationRepository _notificationRepository;
 
   NotificationNotifier(this._notificationRepository)
-      : super(NotificationState());
+    : super(NotificationState());
 
   Future<void> getNotifications() async {
-    state = state.copyWith(isLoading: true, error: null);
-    try {
-      final data = await _notificationRepository.getNotifications();
-      state = state.copyWith(isLoading: false, notifications: data);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-    }
+  state = state.copyWith(isLoading: true, error: null);
+  try {
+    final data = await _notificationRepository.getNotifications();
+    print('✅ NOTIFS REÇUES: ${data.length}');
+    print('✅ DATA: ${data.map((e) => e.toJson()).toList()}');
+    state = state.copyWith(isLoading: false, notifications: data);
+  } catch (e) {
+    print('❌ ERREUR NOTIFS: $e');
+    state = state.copyWith(isLoading: false, error: e.toString());
   }
+}
 
   Future<void> marquerCommeLue(String notificationId) async {
     try {
       await _notificationRepository.marquerCommeLue(notificationId);
+      await getNotifications();
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+
+  Future<void> supprimerNotification(String notificationId) async {
+    try {
+      await _notificationRepository.supprimerNotification(notificationId);
       await getNotifications();
     } catch (e) {
       state = state.copyWith(error: e.toString());
@@ -57,6 +69,6 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
 // ================= PROVIDER =================
 final notificationProvider =
     StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
-  final notificationRepository = ref.read(notificationRepositoryProvider);
-  return NotificationNotifier(notificationRepository);
-});
+      final notificationRepository = ref.read(notificationRepositoryProvider);
+      return NotificationNotifier(notificationRepository);
+    });

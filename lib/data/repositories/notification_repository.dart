@@ -25,4 +25,14 @@ class NotificationRepository {
       throw Exception('Erreur inatendue');
     }
   }
+
+  Future<void> supprimerNotification(String notificationId) async {
+    try {
+      return await _notificationService.supprimerNotification(notificationId);
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Erreur de suppression');
+    } catch (e) {
+      throw Exception('Erreur inatendue');
+    }
+  }
 }

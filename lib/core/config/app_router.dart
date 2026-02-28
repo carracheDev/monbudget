@@ -4,6 +4,7 @@ import 'package:monbudget/features/auth/login_screen.dart';
 import 'package:monbudget/features/auth/onboarding_screen.dart';
 import 'package:monbudget/features/auth/register_screen.dart';
 import 'package:monbudget/features/auth/splash_screen.dart';
+import 'package:monbudget/features/notifications/notifications_screen.dart';
 import 'package:monbudget/shared/components/main_screen.dart';
 
 final appRouter =  GoRouter(
@@ -28,6 +29,10 @@ final appRouter =  GoRouter(
     GoRoute(
       path: '/dashboard',
       builder: (context, state) => const MainScreen(),
-      )
+      ),
+      GoRoute(
+        path:'/notifications',
+        builder:(context, state) => const NotificationsScreen(),
+         )
   ]
-  );
+  );// Dans dashboard, transactions, etc.

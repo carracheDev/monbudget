@@ -11,6 +11,7 @@ import 'package:monbudget/features/auth/auth_provider.dart';
 import 'package:monbudget/features/comptes/compte_provider.dart';
 import 'package:monbudget/features/transactions/add_transaction_sheet.dart';
 import 'package:monbudget/features/transactions/transactions_provider.dart';
+import 'package:monbudget/features/notifications/notification_provider.dart';
 import 'package:monbudget/shared/components/main_screen.dart';
 import 'package:monbudget/shared/widgets/app_card.dart';
 import 'package:monbudget/shared/widgets/app_header.dart';
@@ -37,6 +38,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ref.read(authProvider.notifier).checkAuth();
       ref.read(compteProvider.notifier).getCompte();
       ref.read(transactionsProvider.notifier).getTransactions();
+      // Charger les notifications au démarrage
+      ref.read(notificationProvider.notifier).getNotifications();
     });
   }
 
@@ -389,7 +392,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       appBar: AppHeader(
         title: 'MonBudget',
         type: HeaderType.hamburger,
-        onNotificationTap: () {},
+        // Dans dashboard, transactions, etc.
+        onNotificationTap: () => context.push('/notifications'),
+        onMenuTap: () => Scaffold.of(context).openDrawer(),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -410,6 +415,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'fab_dashboard',
         onPressed: () {
           showModalBottomSheet(
             context: context,

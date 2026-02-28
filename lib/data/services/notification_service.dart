@@ -9,11 +9,15 @@ class NotificationService {
   Future<List<NotificationModel>> getNotifications() async {
     final response = await _apiClient.dio.get('/notifications');
     return (response.data as List)
-        .map((item) => NotificationModel.fromJson(item))
+        .map((e) => NotificationModel.fromJson(e))
         .toList();
   }
 
   Future<void> marquerCommeLue(String notificationId) async {
     await _apiClient.dio.post('/notifications/$notificationId/lue');
+  }
+
+  Future<void> supprimerNotification(String notificationId) async {
+    await _apiClient.dio.delete('/notifications/$notificationId');
   }
 }
