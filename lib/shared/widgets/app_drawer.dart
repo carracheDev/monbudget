@@ -30,6 +30,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
 
   void _naviguer(int index) {
     Navigator.pop(context); // Fermer le drawer
+    // S'assurer que l'on revient à l'écran principal puis changer l'onglet
+    // Ceci permet de naviguer vers les onglets (IndexedStack) même si
+    // on est sur une route dédiée comme /rapport ou /epargne.
+    context.go('/dashboard');
     ref.read(bottomNavIndexProvider.notifier).state = index;
   }
 
@@ -219,7 +223,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       icon: Icons.savings_outlined,
                       label: 'Épargne',
                       isActive: false,
-                      onTap: ()=> context.push('/epargne'),
+                      onTap: () => context.push('/epargne'),
                     ),
                     _buildItem(
                       icon: Icons.wallet_outlined,
@@ -231,7 +235,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       icon: Icons.description_outlined,
                       label: 'Rapports',
                       isActive: false,
-                      onTap: () =>context.push('/rapport'),
+                      onTap: () => context.push('/rapport'),
                     ),
                     _buildItem(
                       icon: Icons.settings_outlined,

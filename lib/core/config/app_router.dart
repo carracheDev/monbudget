@@ -6,7 +6,7 @@ import 'package:monbudget/features/auth/splash_screen.dart';
 import 'package:monbudget/features/epargne/epargne_screnn.dart';
 import 'package:monbudget/features/notifications/notifications_screen.dart';
 import 'package:monbudget/features/portefeuille/portefeuille_screen.dart';
-import 'package:monbudget/features/profil/rapport_screen.dart';
+import 'package:monbudget/features/rapports/rapport_screen.dart';
 import 'package:monbudget/features/transactions/transactions_screen.dart';
 import 'package:monbudget/shared/components/main_screen.dart';
 

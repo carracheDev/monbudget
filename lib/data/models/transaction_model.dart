@@ -8,11 +8,11 @@ class TransactionModel {
   final double montant;
   final TransactionType type;
   final String? description;
-  final String date;
+  final DateTime date;        // ✅ DateTime
   final String statut;
   final String categorieId;
   final String compteSourceId;
-  final String dateCreation;
+  final DateTime dateCreation; // ✅ DateTime
   final CategorieModel? categorie;
 
   TransactionModel({
@@ -29,7 +29,6 @@ class TransactionModel {
     this.categorie,
   });
 
-  // ================= JSON → OBJECT =================
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(
       id: json['id'],
@@ -37,18 +36,17 @@ class TransactionModel {
       montant: (json['montant'] as num).toDouble(),
       type: TransactionType.values.firstWhere((e) => e.name == json['type']),
       description: json['description'],
-      date: json['date'],
+      date: DateTime.parse(json['date']),             // ✅ parse
       statut: json['statut'],
       categorieId: json['categorieId'],
       compteSourceId: json['compteSourceId'],
-      dateCreation: json['dateCreation'],
-      categorie: json['categorie'] != null 
-    ? CategorieModel.fromJson(json['categorie']) 
-    : null,
+      dateCreation: DateTime.parse(json['dateCreation']), // ✅ parse
+      categorie: json['categorie'] != null
+          ? CategorieModel.fromJson(json['categorie'])
+          : null,
     );
   }
 
-  // ================= OBJECT → JSON =================
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -56,11 +54,11 @@ class TransactionModel {
       'montant': montant,
       'type': type.name,
       'description': description,
-      'date': date,
+      'date': date.toIso8601String(),             // ✅
       'statut': statut,
       'categorieId': categorieId,
       'compteSourceId': compteSourceId,
-      'dateCreation': dateCreation,
+      'dateCreation': dateCreation.toIso8601String(), // ✅
       'categorie': categorie,
     };
   }

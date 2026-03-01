@@ -106,7 +106,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     final Map<int, double> depensesParJour = {};
 
     for (final t in transactions) {
-      final date = DateTime.parse(t.date);
+      final date = t.date;
       final diff = DateTime.now().difference(date).inDays;
       if (diff > 6) continue; // Garder seulement 7 jours
       final jour = 6 - diff; // 0 = il y a 6 jours, 6 = aujourd'hui

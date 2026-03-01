@@ -296,7 +296,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                         style: GoogleFonts.poppins(fontSize: 14),
                       ),
                       subtitle: Text(
-                        DateFormat('dd/MM/yyyy').format(DateTime.parse(t.date)),
+                        DateFormat('dd/MM/yyyy').format(t.date),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: Colors.grey,

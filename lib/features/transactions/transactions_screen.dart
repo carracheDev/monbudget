@@ -63,7 +63,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
       final date = DateFormat(
         'dd MMMM yyyy',
         'fr_FR',
-      ).format(DateTime.parse(t.date));
+      ).format(t.date);
       groupes.putIfAbsent(date, () => []).add(t);
     }
     return groupes;
@@ -118,7 +118,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
             _detailRow('Type', t.type.name),
             _detailRow(
               'Date',
-              DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(t.date)),
+              DateFormat('dd/MM/yyyy HH:mm').format(t.date),
             ),
             _detailRow('Description', t.description ?? '-'),
             _detailRow('Référence', '#${t.id.substring(0, 8).toUpperCase()}'),
@@ -362,7 +362,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                   'Transaction',
                               date: DateFormat(
                                 'HH:mm',
-                              ).format(DateTime.parse(t.date)),
+                              ).format(t.date),
                               amount: t.montant,
                               isIncome: t.type.name == 'REVENU',
                               emoji: t.categorie?.icone,

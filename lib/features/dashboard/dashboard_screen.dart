@@ -373,7 +373,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     title: t.description ?? t.categorie?.nom ?? 'Transaction',
                     date: DateFormat(
                       'dd/MM HH:mm',
-                    ).format(DateTime.parse(t.date)),
+                    ).format(t.date),
                     amount: t.montant,
                     isIncome: t.type.name == 'REVENU',
                     emoji: t.categorie?.icone,

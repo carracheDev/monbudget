@@ -232,7 +232,7 @@ class _PortefeuilleScreenState extends ConsumerState<PortefeuilleScreen> {
                         Text(
                           DateFormat(
                             'dd/MM/yyyy',
-                          ).format(DateTime.parse(t.date)),
+                          ).format(t.date),
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: Colors.grey,

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,9 @@ import 'package:monbudget/features/transactions/transactions_provider.dart';
 import 'package:monbudget/shared/widgets/app_drawer.dart';
 import 'package:monbudget/shared/widgets/app_header.dart';
 import 'package:monbudget/shared/widgets/app_toast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
+import 'dart:io';
 
 class RapportsScreen extends ConsumerStatefulWidget {
   const RapportsScreen({super.key});
@@ -22,7 +26,10 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String _periode = 'Mensuel';
-  DateTime _moisSelectionne = DateTime.now();
+  DateTime _moisSelectionne = DateTime(
+    DateTime.now().year,
+    DateTime.now().month - 1,
+  );
   String _toggleGraphique = 'Les deux';
   bool _loadingPdf = false;
   bool _loadingExcel = false;
@@ -40,9 +47,17 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
 
   // ===== DONNÉES CALCULÉES =====
   List<TransactionModel> _getTransactionsFiltrees() {
-    final transactions = ref.watch(transactionsProvider).transactions;
-    return transactions.where((t) {
-      final date = DateTime.parse(t.dateCreation);
+    final List<TransactionModel> transactions = ref
+        .watch(transactionsProvider)
+        .transactions;
+    print('📊 TOTAL: ${transactions.length}');
+    print(
+      '📊 PREMIER DATE: ${transactions.isNotEmpty ? transactions.first.dateCreation : "vide"}',
+    );
+    print('📊 MOIS: ${_moisSelectionne.year}-${_moisSelectionne.month}');
+
+    final result = transactions.where((TransactionModel t) {
+      final date = t.dateCreation;
       if (_periode == 'Mensuel') {
         return date.year == _moisSelectionne.year &&
             date.month == _moisSelectionne.month;
@@ -54,6 +69,9 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
         return date.year == _moisSelectionne.year;
       }
     }).toList();
+
+    print('📊 FILTREES: ${result.length}');
+    return result;
   }
 
   double _getTotalRevenus(List<TransactionModel> transactions) {
@@ -227,19 +245,20 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
 
   // ===== GRAPHIQUE TENDANCE =====
   Widget _buildGraphiqueTendance() {
-    final allTransactions = ref.watch(transactionsProvider).transactions;
+    final List<TransactionModel> allTransactions = ref
+        .watch(transactionsProvider)
+        .transactions;
 
     final mois = List.generate(6, (i) {
       final m = DateTime.now();
       return DateTime(m.year, m.month - (5 - i));
     });
 
+    // ✅ FIX — dateCreation est déjà DateTime
     double maxVal = 1.0;
     for (final m in mois) {
       final txMois = allTransactions.where(
-        (t) =>
-            DateTime.parse(t.dateCreation).year == m.year &&
-            DateTime.parse(t.dateCreation).month == m.month,
+        (t) => t.dateCreation.year == m.year && t.dateCreation.month == m.month,
       );
       final depenses = txMois
           .where((t) => t.type == TransactionType.DEPENSE)
@@ -307,73 +326,55 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              const barreHauteurMax = 120.0;
-              return SizedBox(
-                height: barreHauteurMax + 24,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: mois.map((m) {
-                    final txMois = allTransactions.where(
-                      (t) =>
-                          DateTime.parse(t.dateCreation).year == m.year &&
-                          DateTime.parse(t.dateCreation).month == m.month,
-                    );
+          // ✅ FIX graphique — hauteur fixe sans MediaQuery
+          SizedBox(
+            height: 144,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: mois.map((m) {
+                final txMois = allTransactions.where(
+                  (t) =>
+                      t.dateCreation.year == m.year &&
+                      t.dateCreation.month == m.month,
+                );
 
-                    final depenses = txMois
-                        .where((t) => t.type == TransactionType.DEPENSE)
-                        .fold(0.0, (s, t) => s + t.montant);
-                    final revenus = txMois
-                        .where((t) => t.type == TransactionType.REVENU)
-                        .fold(0.0, (s, t) => s + t.montant);
+                final depenses = txMois
+                    .where((t) => t.type == TransactionType.DEPENSE)
+                    .fold(0.0, (s, t) => s + t.montant);
+                final revenus = txMois
+                    .where((t) => t.type == TransactionType.REVENU)
+                    .fold(0.0, (s, t) => s + t.montant);
 
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (_toggleGraphique != 'Dépenses')
-                          _buildBarre(
-                            revenus,
-                            maxVal,
-                            barreHauteurMax,
-                            AppColors.success,
-                          ),
-                        if (_toggleGraphique == 'Les deux')
-                          const SizedBox(height: 2),
-                        if (_toggleGraphique != 'Revenus')
-                          _buildBarre(
-                            depenses,
-                            maxVal,
-                            barreHauteurMax,
-                            AppColors.primary,
-                          ),
-                        const SizedBox(height: 4),
-                        Text(
-                          DateFormat('MMM', 'fr_FR').format(m),
-                          style: GoogleFonts.poppins(
-                            fontSize: 10,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              );
-            },
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (_toggleGraphique != 'Dépenses')
+                      _buildBarre(revenus, maxVal, AppColors.success),
+                    if (_toggleGraphique == 'Les deux')
+                      const SizedBox(height: 2),
+                    if (_toggleGraphique != 'Revenus')
+                      _buildBarre(depenses, maxVal, AppColors.primary),
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat('MMM', 'fr_FR').format(m),
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBarre(
-    double valeur,
-    double max,
-    double hauteurMax,
-    Color color,
-  ) {
+  Widget _buildBarre(double valeur, double max, Color color) {
+    final double hauteurMax = _toggleGraphique == 'Les deux' ? 50.0 : 100.0;
     final hauteur = max == 0
         ? 4.0
         : (valeur / max * hauteurMax).clamp(4.0, hauteurMax);
@@ -506,72 +507,84 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
   }
 
   // ===== BOUTONS EXPORT =====
-  Future<void> _exporterPdf() async {
-    setState(() => _loadingPdf = true);
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      await apiClient.dio.get(
-        '/rapports/exporter',
-        queryParameters: {
-          'format': 'pdf',
-          'periode': _periode.toLowerCase(),
-          'mois': _moisSelectionne.month,
-          'annee': _moisSelectionne.year,
-        },
-      );
-      if (mounted) {
-        AppToast.show(
-          context,
+  // ✅ FIX — bonnes URLs + téléchargement fichier
+
+// ✅ APRÈS le download — ouvre le fichier
+
+Future<void> _exporterPdf() async {
+  setState(() => _loadingPdf = true);
+  try {
+    final apiClient = ref.read(apiClientProvider);
+    // ✅ Dossier Downloads accessible
+    final dir = Directory('/storage/emulated/0/Download');
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final path = '${dir.path}/rapport_${_moisSelectionne.year}_${_moisSelectionne.month}.pdf';
+
+    await apiClient.dio.download(
+      '/rapports/export/pdf',
+      path,
+      queryParameters: {
+        'periode': _periode.toUpperCase(),
+        'mois': _moisSelectionne.month,
+        'annee': _moisSelectionne.year,
+      },
+    );
+
+    await OpenFile.open(path);
+
+    if (mounted) {
+      AppToast.show(context,
           message: 'Rapport PDF téléchargé ✓',
-          type: ToastType.success,
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        AppToast.show(
-          context,
-          message: 'Erreur export PDF',
-          type: ToastType.error,
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _loadingPdf = false);
+          type: ToastType.success);
     }
+  } catch (e) {
+    print('❌ PDF: $e');
+    if (mounted) {
+      AppToast.show(context,
+          message: 'Erreur: $e',
+          type: ToastType.error);
+    }
+  } finally {
+    if (mounted) setState(() => _loadingPdf = false);
   }
+}
 
-  Future<void> _exporterExcel() async {
-    setState(() => _loadingExcel = true);
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      await apiClient.dio.get(
-        '/rapports/exporter',
-        queryParameters: {
-          'format': 'excel',
-          'periode': _periode.toLowerCase(),
-          'mois': _moisSelectionne.month,
-          'annee': _moisSelectionne.year,
-        },
-      );
-      if (mounted) {
-        AppToast.show(
-          context,
+Future<void> _exporterExcel() async {
+  setState(() => _loadingExcel = true);
+  try {
+    final apiClient = ref.read(apiClientProvider);
+    final dir = Directory('/storage/emulated/0/Download');
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final path = '${dir.path}/rapport_${_moisSelectionne.year}_${_moisSelectionne.month}.xlsx';
+
+    await apiClient.dio.download(
+      '/rapports/export/excel',
+      path,
+      queryParameters: {
+        'periode': _periode.toUpperCase(),
+        'mois': _moisSelectionne.month,
+        'annee': _moisSelectionne.year,
+      },
+    );
+
+    await OpenFile.open(path);
+
+    if (mounted) {
+      AppToast.show(context,
           message: 'Rapport Excel exporté ✓',
-          type: ToastType.success,
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        AppToast.show(
-          context,
-          message: 'Erreur export Excel',
-          type: ToastType.error,
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _loadingExcel = false);
+          type: ToastType.success);
     }
+  } catch (e) {
+    print('❌ EXCEL: $e');
+    if (mounted) {
+      AppToast.show(context,
+          message: 'Erreur: $e',
+          type: ToastType.error);
+    }
+  } finally {
+    if (mounted) setState(() => _loadingExcel = false);
   }
-
+}
   Widget _buildBoutonsExport() {
     return Column(
       children: [
