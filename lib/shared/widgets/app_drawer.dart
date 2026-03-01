@@ -231,7 +231,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       icon: Icons.description_outlined,
                       label: 'Rapports',
                       isActive: false,
-                      onTap: () {},
+                      onTap: () =>context.push('/rapport'),
                     ),
                     _buildItem(
                       icon: Icons.settings_outlined,
