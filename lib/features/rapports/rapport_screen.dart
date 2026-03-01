@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +10,6 @@ import 'package:monbudget/features/transactions/transactions_provider.dart';
 import 'package:monbudget/shared/widgets/app_drawer.dart';
 import 'package:monbudget/shared/widgets/app_header.dart';
 import 'package:monbudget/shared/widgets/app_toast.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'dart:io';
 
@@ -50,11 +48,6 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
     final List<TransactionModel> transactions = ref
         .watch(transactionsProvider)
         .transactions;
-    print('📊 TOTAL: ${transactions.length}');
-    print(
-      '📊 PREMIER DATE: ${transactions.isNotEmpty ? transactions.first.dateCreation : "vide"}',
-    );
-    print('📊 MOIS: ${_moisSelectionne.year}-${_moisSelectionne.month}');
 
     final result = transactions.where((TransactionModel t) {
       final date = t.dateCreation;
@@ -70,7 +63,6 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
       }
     }).toList();
 
-    print('📊 FILTREES: ${result.length}');
     return result;
   }
 
