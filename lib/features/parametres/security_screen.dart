@@ -205,7 +205,7 @@ class SecurityScreen extends ConsumerWidget {
                     ),
                   ),
                   value: security.biometricEnabled,
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                   onChanged: (value) {
                     ref
                         .read(securitySettingsProvider.notifier)
@@ -245,7 +245,7 @@ class SecurityScreen extends ConsumerWidget {
                     ),
                   ),
                   value: security.pinEnabled,
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                   onChanged: (value) {
                     if (value) {
                       _showSetPinDialog(context, ref);

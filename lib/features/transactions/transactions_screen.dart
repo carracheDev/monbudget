@@ -41,8 +41,9 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
       // Filtre type
       if (_filtreActif == 'Revenus' && t.type.name != 'REVENU') return false;
       if (_filtreActif == 'Dépenses' && t.type.name != 'DEPENSE') return false;
-      if (_filtreActif == 'Transferts' && t.type.name != 'TRANSFERT')
+      if (_filtreActif == 'Transferts' && t.type.name != 'TRANSFERT') {
         return false;
+      }
 
       // Filtre recherche
       if (_recherche.isNotEmpty) {
