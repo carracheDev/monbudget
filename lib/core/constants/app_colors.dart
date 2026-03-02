@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // ================= COULEURS DE BASE =================
+
   // Rouge principal
   static const Color primary = Color(0xFFE53935);
 
@@ -16,9 +18,28 @@ class AppColors {
   // Texte secondaire
   static const Color textSecondary = Color(0xFF757575);
 
-  // Fond page
-  static const Color background = Color(0xFFF5F5F5);
+  // Fond page - CLAIR
+  static const Color backgroundLight = Color(0xFFF5F5F5);
+  // Fond page - SOMBRE
+  static const Color backgroundDark = Color(0xFF121212);
 
-  // Fond carte
-  static const Color cardBackground = Color(0xFFFFFFFF);
+  // Fond carte - CLAIR
+  static const Color cardBackgroundLight = Color(0xFFFFFFFF);
+  // Fond carte - SOMBRE
+  static const Color cardBackgroundDark = Color(0xFF1E1E1E);
+
+  // Texte - CLAIR
+  static const Color textPrimaryLight = Color(0xFF212121);
+  static const Color textSecondaryLight = Color(0xFF757575);
+
+  // Texte - SOMBRE
+  static const Color textPrimaryDark = Color(0xFFFFFFFF);
+  static const Color textSecondaryDark = Color(0xFFB0B0B0);
+
+  // Fond Scaffold - SOMBRE
+  static const Color scaffoldBackgroundDark = Color(0xFF121212);
+
+  // Alias pour compatibilité arrière
+  static const Color background = backgroundLight;
+  static const Color cardBackground = cardBackgroundLight;
 }

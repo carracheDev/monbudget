@@ -58,9 +58,9 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(AppStrings.appName, style: AppTextStyles.montantPrincipal),
+            Text(AppStrings.appName, style: AppTextStyles.montantPrincipal(context)),
             const SizedBox(height: 8),
-            Text(AppStrings.appTagline, style: AppTextStyles.labelSecondaire),
+            Text(AppStrings.appTagline, style: AppTextStyles.labelSecondaire(context)),
             const SizedBox(height: 32),
             CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2),
           ],

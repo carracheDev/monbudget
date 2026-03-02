@@ -65,12 +65,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: AppTextStyles.textPrimary(context),
           ),
         ),
         Text(
           dateFormatee(),
-          style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            color: AppTextStyles.textSecondary(context),
+          ),
         ),
       ],
     );
@@ -88,11 +91,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Solde Actuel', style: AppTextStyles.labelSecondaire),
+              Text(
+                'Solde Actuel',
+                style: AppTextStyles.labelSecondaire(context),
+              ),
               IconButton(
                 icon: Icon(
                   _soldeVisible ? Icons.visibility : Icons.visibility_off,
-                  color: AppColors.textSecondary,
+                  color: AppTextStyles.textSecondary(context),
                 ),
                 onPressed: () => setState(() => _soldeVisible = !_soldeVisible),
               ),
@@ -102,14 +108,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ? const CircularProgressIndicator(color: AppColors.primary)
               : Text(
                   _soldeVisible ? _formatMontant(solde) : '••••• F',
-                  style: AppTextStyles.montantPrincipal.copyWith(
-                    color: AppColors.success,
-                    fontSize: 32,
-                  ),
+                  style: AppTextStyles.montantPrincipal(
+                    context,
+                  ).copyWith(color: AppColors.success, fontSize: 32),
                 ),
           Text(
             "Mis à jour aujourd'hui",
-            style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: AppTextStyles.textSecondary(context),
+            ),
           ),
         ],
       ),
@@ -137,7 +145,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Revenus', style: AppTextStyles.labelSecondaire),
+                Text('Revenus', style: AppTextStyles.labelSecondaire(context)),
                 Text(
                   '+${_formatMontant(revenus)}',
                   style: GoogleFonts.poppins(
@@ -146,7 +154,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     fontSize: 16,
                   ),
                 ),
-                Text('Ce mois', style: AppTextStyles.labelSecondaire),
+                Text('Ce mois', style: AppTextStyles.labelSecondaire(context)),
               ],
             ),
           ),
@@ -161,7 +169,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Dépenses', style: AppTextStyles.labelSecondaire),
+                Text('Dépenses', style: AppTextStyles.labelSecondaire(context)),
                 Text(
                   '-${_formatMontant(depenses)}',
                   style: GoogleFonts.poppins(
@@ -170,7 +178,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     fontSize: 16,
                   ),
                 ),
-                Text('Ce mois', style: AppTextStyles.labelSecondaire),
+                Text('Ce mois', style: AppTextStyles.labelSecondaire(context)),
               ],
             ),
           ),
@@ -228,7 +236,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppTextStyles.textPrimary(context),
             ),
           ),
           const SizedBox(height: 12),
@@ -258,7 +266,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Text(
                       'Aucune dépense ce mois',
-                      style: AppTextStyles.labelSecondaire,
+                      style: AppTextStyles.labelSecondaire(context),
                     ),
                   ),
                 )
@@ -294,7 +302,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Expanded(
                     child: Text(
                       entry.key,
-                      style: AppTextStyles.labelSecondaire,
+                      style: AppTextStyles.labelSecondaire(context),
                     ),
                   ),
                   Text(
@@ -302,7 +310,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: AppTextStyles.textPrimary(context),
                     ),
                   ),
                 ],
@@ -330,7 +338,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppTextStyles.textPrimary(context),
               ),
             ),
             TextButton(
@@ -361,7 +369,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Aucune transaction',
-                        style: AppTextStyles.labelSecondaire,
+                        style: AppTextStyles.labelSecondaire(context),
                       ),
                     ],
                   ),
@@ -371,9 +379,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: transactions.map((t) {
                   return TransactionItem(
                     title: t.description ?? t.categorie?.nom ?? 'Transaction',
-                    date: DateFormat(
-                      'dd/MM HH:mm',
-                    ).format(t.date),
+                    date: DateFormat('dd/MM HH:mm').format(t.date),
                     amount: t.montant,
                     isIncome: t.type.name == 'REVENU',
                     emoji: t.categorie?.icone,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monbudget/core/constants/app_colors.dart';
 
 class AppCard extends StatelessWidget {
   final Widget child;
@@ -24,28 +25,27 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Couleur adaptative selon le thème
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark
+        ? AppColors.cardBackgroundDark
+        : AppColors.cardBackgroundLight;
+
     return Card(
       elevation: 2,
       shadowColor: Colors.black12,
-      color: color ?? Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      color: color ?? cardColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: customBorderSide != null
-              ? Border(
-                  left: customBorderSide!,
-                )
+              ? Border(left: customBorderSide!)
               : borderColor != null
-                  ? Border(
-                      left: BorderSide(
-                        color: borderColor!,
-                        width: borderWidth,
-                      ),
-                    )
-                  : null,
+              ? Border(
+                  left: BorderSide(color: borderColor!, width: borderWidth),
+                )
+              : null,
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),

@@ -241,7 +241,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       icon: Icons.settings_outlined,
                       label: 'Paramètres',
                       isActive: false,
-                      onTap: () {},
+                      onTap: () => context.push('/parametres'),
                     ),
                   ],
                 ),

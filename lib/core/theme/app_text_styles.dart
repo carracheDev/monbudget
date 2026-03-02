@@ -3,45 +3,65 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
 class AppTextStyles {
+  // ================= COULEURS ADAPTATIVES =================
+
+  // Couleur primaire du texte (s'adapte au thème)
+  static Color textPrimary(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+  }
+
+  // Couleur secondaire du texte (s'adapte au thème)
+  static Color textSecondary(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+  }
+
+  // ================= STYLES DE TEXTE =================
+
   // Montant principal (Dashboard)
-  static TextStyle get montantPrincipal => GoogleFonts.montserrat(
-    fontSize: 32,
-    fontWeight: FontWeight.bold,
-    color: AppColors.primary,
-  );
+  static TextStyle montantPrincipal(BuildContext context) =>
+      GoogleFonts.montserrat(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: AppColors.primary,
+      );
 
   // Titre de page
-  static TextStyle get titrePage => GoogleFonts.poppins(
+  static TextStyle titrePage(BuildContext context) => GoogleFonts.poppins(
     fontSize: 20,
     fontWeight: FontWeight.bold,
-    color: Colors.white,
+    color: textPrimary(context),
   );
 
   // Titre de section
-  static TextStyle get titreSection => GoogleFonts.poppins(
+  static TextStyle titreSection(BuildContext context) => GoogleFonts.poppins(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: Colors.black87,
+    color: textPrimary(context),
   );
 
   // Montant secondaire
-  static TextStyle get montantSecondaire => GoogleFonts.montserrat(
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-    color: AppColors.success,
-  );
+  static TextStyle montantSecondaire(BuildContext context) =>
+      GoogleFonts.montserrat(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: AppColors.success,
+      );
 
   // Label secondaire
-  static TextStyle get labelSecondaire => GoogleFonts.poppins(
+  static TextStyle labelSecondaire(BuildContext context) => GoogleFonts.poppins(
     fontSize: 15,
     fontWeight: FontWeight.normal,
-    color: AppColors.textSecondary,
+    color: textSecondary(context),
   );
 
   // Corps de texte
-  static TextStyle get bodyText => GoogleFonts.poppins(
+  static TextStyle bodyText(BuildContext context) => GoogleFonts.poppins(
     fontSize: 15,
     fontWeight: FontWeight.normal,
-    color: Colors.black87,
+    color: textPrimary(context),
   );
 }

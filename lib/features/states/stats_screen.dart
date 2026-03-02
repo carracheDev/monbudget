@@ -67,7 +67,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: AppTextStyles.labelSecondaire),
+            Text(label, style: AppTextStyles.labelSecondaire(context)),
             const SizedBox(height: 4),
             Text(
               _formatMontant(montant),
@@ -224,7 +224,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
           ),
         ),
         const SizedBox(width: 4),
-        Text(label, style: AppTextStyles.labelSecondaire),
+        Text(label, style: AppTextStyles.labelSecondaire(context)),
       ],
     );
   }
@@ -271,7 +271,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
             Center(
               child: Text(
                 'Aucune dépense',
-                style: AppTextStyles.labelSecondaire,
+                style: AppTextStyles.labelSecondaire(context),
               ),
             )
           else
