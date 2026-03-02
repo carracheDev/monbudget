@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:monbudget/core/config/providers.dart';
 import 'package:monbudget/core/constants/app_constants.dart';
+import 'package:monbudget/core/services/firebase_messaging_service.dart';
 import 'package:monbudget/data/models/user_model.dart';
 import 'package:monbudget/data/repositories/auth_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,6 +71,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await prefs.setString('user_nom', user.nomComplet);
       await prefs.setString('user_email', user.email);
       await prefs.setString('user_id', user.id);
+
+       // ✅ Envoyer le token FCM au backend après login
+    final fcmToken = await FirebaseMessagingService.getToken();
+    if (fcmToken != null) {
+      await FirebaseMessagingService.saveFcmToken(fcmToken);
+    }
 
       // Mettre à jour l'état
       state = state.copyWith(

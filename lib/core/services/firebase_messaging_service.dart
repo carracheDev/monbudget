@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:monbudget/core/config/api_client.dart';
 
-// ✅ Handler pour les notifications en background (doit être top-level)
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('📬 Notification background: ${message.notification?.title}');
@@ -13,7 +13,6 @@ class FirebaseMessagingService {
       FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
-    // 1. Demander permission
     final settings = await _messaging.requestPermission(
       alert: true,
       badge: true,
@@ -21,14 +20,11 @@ class FirebaseMessagingService {
     );
     print('🔔 Permission: ${settings.authorizationStatus}');
 
-    // 2. Config notifications locales
-    const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const initSettings = InitializationSettings(android: androidSettings);
     await _localNotifications.initialize(initSettings);
 
-    // 3. Canal Android
     const androidChannel = AndroidNotificationChannel(
       'monbudget_channel',
       'MonBudget Notifications',
@@ -41,18 +37,35 @@ class FirebaseMessagingService {
         >()
         ?.createNotificationChannel(androidChannel);
 
-    // 4. Handler background
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    // 5. Notification reçue app ouverte
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('📬 Notification foreground: ${message.notification?.title}');
       _showLocalNotification(message);
     });
 
-    // 6. Récupérer le token FCM
     final token = await _messaging.getToken();
     print('🔑 FCM Token: $token');
+
+    // ✅ Refresh automatique du token
+    _messaging.onTokenRefresh.listen((newToken) async {
+      print('🔄 Token refreshed: $newToken');
+      await saveFcmToken(newToken);
+    });
+  }
+
+  // ✅ Sauvegarder le token dans le backend
+  static Future<void> saveFcmToken(String token) async {
+    try {
+      final apiClient = ApiClient();
+      await apiClient.dio.post(
+        '/auth/fcm-token',
+        data: {'fcmToken': token},
+      );
+      print('✅ Token FCM sauvegardé');
+    } catch (e) {
+      print('❌ Erreur save token: $e');
+    }
   }
 
   static Future<void> _showLocalNotification(RemoteMessage message) async {
