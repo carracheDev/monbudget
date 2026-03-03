@@ -30,7 +30,7 @@ class TransactionService {
         'montant': montant,
         'type': type,
         'categorieId': categorieId,
-        'description': ?description,
+        'description': description,
       },
     );
     return TransactionModel.fromJson(response.data);
@@ -41,7 +41,7 @@ class TransactionService {
   }
 
   Future<Map<String, dynamic>> getStats() async {
-  final response = await _apiClient.dio.get('/transactions/stats/mois');
-  return response.data;
-}
+    final response = await _apiClient.dio.get('/transactions/stats/mois');
+    return response.data;
+  }
 }
