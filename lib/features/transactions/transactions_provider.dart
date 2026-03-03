@@ -33,7 +33,7 @@ class TransactionsNotifier extends StateNotifier<TransactionsState> {
   final TransactionRepository _transactionRepository;
 
   TransactionsNotifier(this._transactionRepository)
-      : super(TransactionsState());
+    : super(TransactionsState());
 
   // GET TRANSACTIONS
   Future<void> getTransactions() async {
@@ -55,14 +55,19 @@ class TransactionsNotifier extends StateNotifier<TransactionsState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      print('📤 Envoi transaction au backend...');
       await _transactionRepository.createTransaction(
         montant: montant,
         type: type,
         categorieId: categorieId,
       );
+      print('✅ Transaction créée !');
+
       // Recharger la liste après création
       await getTransactions();
     } catch (e) {
+      print('❌ ERREUR TRANSACTION: $e');
+
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
@@ -83,6 +88,6 @@ class TransactionsNotifier extends StateNotifier<TransactionsState> {
 // ================= PROVIDER =================
 final transactionsProvider =
     StateNotifierProvider<TransactionsNotifier, TransactionsState>((ref) {
-  final transactionRepository = ref.read(transactionRepositoryProvider);
-  return TransactionsNotifier(transactionRepository);
-});
+      final transactionRepository = ref.read(transactionRepositoryProvider);
+      return TransactionsNotifier(transactionRepository);
+    });
