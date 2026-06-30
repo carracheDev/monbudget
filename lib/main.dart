@@ -7,8 +7,8 @@ import './core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // ✅
-  await FirebaseMessagingService.init(); // ✅
+  await Firebase.initializeApp(); 
+  await FirebaseMessagingService.init(); 
   runApp(const ProviderScope(child: MonBudgetApp()));
 }
 

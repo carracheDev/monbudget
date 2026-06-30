@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.monbudget.monbudget"
+    namespace = "com.carracheDev.monbudgetApp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -26,16 +26,21 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "17"
     }
 
     defaultConfig {
-        applicationId = "com.monbudget.monbudget"
+        applicationId = "com.carracheDev.monbudgetApp"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
+
+        // resolve variant ambiguity for firebase_app_distribution_android
+        // plugin defines two product flavors (production/staging).
+        // the "default" dimension is inferred from that library.
+        missingDimensionStrategy("default", "production")
     }
 
     signingConfigs {

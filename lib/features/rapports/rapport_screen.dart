@@ -12,6 +12,7 @@ import 'package:monbudget/shared/widgets/app_header.dart';
 import 'package:monbudget/shared/widgets/app_toast.dart';
 import 'package:open_file/open_file.dart';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class RapportsScreen extends ConsumerStatefulWidget {
   const RapportsScreen({super.key});
@@ -501,82 +502,102 @@ class _RapportsScreenState extends ConsumerState<RapportsScreen> {
   // ===== BOUTONS EXPORT =====
   // ✅ FIX — bonnes URLs + téléchargement fichier
 
-// ✅ APRÈS le download — ouvre le fichier
+  // ✅ APRÈS le download — ouvre le fichier
 
-Future<void> _exporterPdf() async {
-  setState(() => _loadingPdf = true);
-  try {
-    final apiClient = ref.read(apiClientProvider);
-    // ✅ Dossier Downloads accessible
-    final dir = Directory('/storage/emulated/0/Download');
-    if (!await dir.exists()) await dir.create(recursive: true);
-    final path = '${dir.path}/rapport_${_moisSelectionne.year}_${_moisSelectionne.month}.pdf';
+  Future<void> _exporterPdf() async {
+    setState(() => _loadingPdf = true);
+    try {
+      final apiClient = ref.read(apiClientProvider);
 
-    await apiClient.dio.download(
-      '/rapports/export/pdf',
-      path,
-      queryParameters: {
-        'periode': _periode.toUpperCase(),
-        'mois': _moisSelectionne.month,
-        'annee': _moisSelectionne.year,
-      },
-    );
+      // ✅ Use path_provider for proper storage access
+      final directory = await getExternalStorageDirectory();
+      final downloadDir = directory != null
+          ? Directory('${directory.path}/Download')
+          : await getApplicationDocumentsDirectory();
 
-    await OpenFile.open(path);
+      if (!await downloadDir.exists()) {
+        await downloadDir.create(recursive: true);
+      }
 
-    if (mounted) {
-      AppToast.show(context,
+      final path =
+          '${downloadDir.path}/rapport_${_moisSelectionne.year}_${_moisSelectionne.month}.pdf';
+
+      await apiClient.dio.download(
+        '/rapports/export/pdf',
+        path,
+        queryParameters: {
+          'periode': _periode.toUpperCase(),
+          'mois': _moisSelectionne.month,
+          'annee': _moisSelectionne.year,
+        },
+      );
+
+      await OpenFile.open(path);
+
+      if (mounted) {
+        AppToast.show(
+          context,
           message: 'Rapport PDF téléchargé ✓',
-          type: ToastType.success);
+          type: ToastType.success,
+        );
+      }
+    } catch (e) {
+      print('❌ PDF: $e');
+      if (mounted) {
+        AppToast.show(context, message: 'Erreur: $e', type: ToastType.error);
+      }
+    } finally {
+      if (mounted) setState(() => _loadingPdf = false);
     }
-  } catch (e) {
-    print('❌ PDF: $e');
-    if (mounted) {
-      AppToast.show(context,
-          message: 'Erreur: $e',
-          type: ToastType.error);
-    }
-  } finally {
-    if (mounted) setState(() => _loadingPdf = false);
   }
-}
 
-Future<void> _exporterExcel() async {
-  setState(() => _loadingExcel = true);
-  try {
-    final apiClient = ref.read(apiClientProvider);
-    final dir = Directory('/storage/emulated/0/Download');
-    if (!await dir.exists()) await dir.create(recursive: true);
-    final path = '${dir.path}/rapport_${_moisSelectionne.year}_${_moisSelectionne.month}.xlsx';
+  Future<void> _exporterExcel() async {
+    setState(() => _loadingExcel = true);
+    try {
+      final apiClient = ref.read(apiClientProvider);
 
-    await apiClient.dio.download(
-      '/rapports/export/excel',
-      path,
-      queryParameters: {
-        'periode': _periode.toUpperCase(),
-        'mois': _moisSelectionne.month,
-        'annee': _moisSelectionne.year,
-      },
-    );
+      // ✅ Use path_provider for proper storage access
+      final directory = await getExternalStorageDirectory();
+      final downloadDir = directory != null
+          ? Directory('${directory.path}/Download')
+          : await getApplicationDocumentsDirectory();
 
-    await OpenFile.open(path);
+      if (!await downloadDir.exists()) {
+        await downloadDir.create(recursive: true);
+      }
 
-    if (mounted) {
-      AppToast.show(context,
+      final path =
+          '${downloadDir.path}/rapport_${_moisSelectionne.year}_${_moisSelectionne.month}.xlsx';
+
+      await apiClient.dio.download(
+        '/rapports/export/excel',
+        path,
+        queryParameters: {
+          'periode': _periode.toUpperCase(),
+          'mois': _moisSelectionne.month,
+          'annee': _moisSelectionne.year,
+        },
+      );
+
+      await OpenFile.open(path);
+
+      if (mounted) {
+        AppToast.show(
+          context,
           message: 'Rapport Excel exporté ✓',
-          type: ToastType.success);
+          type: ToastType.success,
+        );
+      }
+    } catch (e) {
+      print('❌ EXCEL: $e');
+      if (mounted) {
+        AppToast.show(context, message: 'Erreur: $e', type: ToastType.error);
+      }
+    } finally {
+      if (mounted) setState(() => _loadingExcel = false);
     }
-  } catch (e) {
-    print('❌ EXCEL: $e');
-    if (mounted) {
-      AppToast.show(context,
-          message: 'Erreur: $e',
-          type: ToastType.error);
-    }
-  } finally {
-    if (mounted) setState(() => _loadingExcel = false);
   }
-}
+
   Widget _buildBoutonsExport() {
     return Column(
       children: [

@@ -1,6 +1,6 @@
 class AppConstants {
   // URL de base de l'API
-static const String baseUrl = 'https://monbudget-backend-production.up.railway.app';
+static const String baseUrl = 'https://vps-tontinebenin.taila91a50.ts.net:10000';
 
   //Clées de stockage local
   static const String keyAccessToken = 'access_token';

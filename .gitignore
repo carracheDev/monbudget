@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Artefacts & secrets (ajout déploiement)
+/android/build/
+android/build/
+*.jks
+android/key.properties
+/DOCUMENTATION PERSONNEL.md

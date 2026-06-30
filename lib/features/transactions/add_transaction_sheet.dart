@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:monbudget/core/constants/app_colors.dart';
 import 'package:monbudget/data/models/transaction_model.dart';
 import 'package:monbudget/features/categories/categorie_provider.dart';
+import 'package:monbudget/features/comptes/compte_provider.dart';
 import 'package:monbudget/features/transactions/transactions_provider.dart';
 import 'package:monbudget/shared/widgets/app_button.dart';
 import 'package:monbudget/shared/widgets/app_toast.dart';
@@ -41,7 +42,9 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
       _montantController.text.isNotEmpty && _categorieId != null;
 
   Future<void> _enregistrer() async {
-    await ref.read(transactionsProvider.notifier).createTransaction(
+    await ref
+        .read(transactionsProvider.notifier)
+        .createTransaction(
           montant: double.parse(_montantController.text),
           type: _type,
           categorieId: _categorieId!,
@@ -62,77 +65,81 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
           message: 'Transaction ajoutée ✓',
           type: ToastType.success,
         );
+
+        // Recharger les comptes pour mettre à jour le solde
+        ref.read(compteProvider.notifier).getCompte();
+
         Navigator.pop(context);
       }
     }
   }
 
   void _showAddCategorieDialog() {
-  final nomController = TextEditingController();
-  final iconeController = TextEditingController();
+    final nomController = TextEditingController();
+    final iconeController = TextEditingController();
 
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(
-        'Nouvelle catégorie',
-        style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: iconeController,
-            decoration: InputDecoration(
-              labelText: 'Icône (emoji)',
-              hintText: '🛒',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Nouvelle catégorie',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: iconeController,
+              decoration: InputDecoration(
+                labelText: 'Icône (emoji)',
+                hintText: '🛒',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: nomController,
-            decoration: InputDecoration(
-              labelText: 'Nom de la catégorie',
-              hintText: 'Ex: Courses',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 12),
+            TextField(
+              controller: nomController,
+              decoration: InputDecoration(
+                labelText: 'Nom de la catégorie',
+                hintText: 'Ex: Courses',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            onPressed: () async {
+              if (nomController.text.isNotEmpty) {
+                await ref
+                    .read(categorieProvider.notifier)
+                    .createCategorie(
+                      nom: nomController.text,
+                      icone: iconeController.text.isEmpty
+                          ? '📦'
+                          : iconeController.text,
+                    );
+                if (mounted) Navigator.pop(context);
+              }
+            },
+            child: Text(
+              'Créer',
+              style: GoogleFonts.poppins(color: Colors.white),
             ),
           ),
         ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Annuler'),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-          ),
-          onPressed: () async {
-            if (nomController.text.isNotEmpty) {
-              await ref.read(categorieProvider.notifier).createCategorie(
-                    nom: nomController.text,
-                    icone: iconeController.text.isEmpty
-                        ? '📦'
-                        : iconeController.text,
-                  );
-              if (mounted) Navigator.pop(context);
-            }
-          },
-          child: Text(
-            'Créer',
-            style: GoogleFonts.poppins(color: Colors.white),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,8 +193,8 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                   final color = type == TransactionType.REVENU
                       ? AppColors.success
                       : type == TransactionType.DEPENSE
-                          ? AppColors.primary
-                          : AppColors.savings;
+                      ? AppColors.primary
+                      : AppColors.savings;
                   return Expanded(
                     child: GestureDetector(
                       onTap: () => setState(() => _type = type),
@@ -216,9 +223,13 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
             const SizedBox(height: 20),
 
             // Montant
-            Text('Montant (F CFA)',
-                style: GoogleFonts.poppins(
-                    fontSize: 14, fontWeight: FontWeight.w500)),
+            Text(
+              'Montant (F CFA)',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _montantController,
@@ -249,9 +260,13 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
             const SizedBox(height: 20),
 
             // Catégorie
-            Text('Catégorie',
-                style: GoogleFonts.poppins(
-                    fontSize: 14, fontWeight: FontWeight.w500)),
+            Text(
+              'Catégorie',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 8),
             categorieState.isLoading
                 ? const CircularProgressIndicator(color: AppColors.primary)
@@ -265,7 +280,9 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? AppColors.primary
@@ -276,8 +293,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                             '${cat.icone} ${cat.nom}',
                             style: GoogleFonts.poppins(
                               fontSize: 13,
-                              color:
-                                  isSelected ? Colors.white : Colors.black87,
+                              color: isSelected ? Colors.white : Colors.black87,
                               fontWeight: isSelected
                                   ? FontWeight.w600
                                   : FontWeight.normal,
@@ -288,37 +304,44 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                     }).toList(),
                   ),
 
-                  // Après la liste des catégories
-GestureDetector(
-  onTap: () => _showAddCategorieDialog(),
-  child: Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    decoration: BoxDecoration(
-      border: Border.all(color: AppColors.primary),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(Icons.add, color: AppColors.primary, size: 16),
-        const SizedBox(width: 4),
-        Text(
-          'Nouvelle',
-          style: GoogleFonts.poppins(
-            color: AppColors.primary,
-            fontSize: 13,
-          ),
-        ),
-      ],
-    ),
-  ),
-),
+            // Après la liste des catégories
+            GestureDetector(
+              onTap: () => _showAddCategorieDialog(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.primary),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add, color: AppColors.primary, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Nouvelle',
+                      style: GoogleFonts.poppins(
+                        color: AppColors.primary,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
 
             // Description
-            Text('Description (optionnel)',
-                style: GoogleFonts.poppins(
-                    fontSize: 14, fontWeight: FontWeight.w500)),
+            Text(
+              'Description (optionnel)',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _descriptionController,

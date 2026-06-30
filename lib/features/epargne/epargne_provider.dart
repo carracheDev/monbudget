@@ -8,11 +8,7 @@ class EpargneState {
   final bool isLoading;
   final String? error;
 
-  EpargneState({
-    this.objectifs = const [],
-    this.error,
-    this.isLoading = false,
-  });
+  EpargneState({this.objectifs = const [], this.error, this.isLoading = false});
 
   EpargneState copyWith({
     List<EpargneModel>? objectifs,
@@ -50,13 +46,15 @@ class EpargneNotifier extends StateNotifier<EpargneState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _epargneRepository.createObjectif(
+      final newObjectif = await _epargneRepository.createObjectif(
         nom: nom,
         icone: icone,
         montantCible: montantCible,
         dateEcheance: dateEcheance,
       );
-      await getObjectifs();
+      // ✅ Update state immediately with new objectif
+      final updatedObjectifs = [...state.objectifs, newObjectif];
+      state = state.copyWith(isLoading: false, objectifs: updatedObjectifs);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -79,11 +77,18 @@ class EpargneNotifier extends StateNotifier<EpargneState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _epargneRepository.ajouterContribution(
+      final updatedObjectif = await _epargneRepository.ajouterContribution(
         epargneId: objectifId,
         montant: montant,
       );
-      await getObjectifs();
+      // ✅ Update the specific objectif in state immediately
+      final updatedObjectifs = state.objectifs.map((obj) {
+        if (obj.id == objectifId) {
+          return updatedObjectif;
+        }
+        return obj;
+      }).toList();
+      state = state.copyWith(isLoading: false, objectifs: updatedObjectifs);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -101,8 +106,9 @@ class EpargneNotifier extends StateNotifier<EpargneState> {
   }
 }
 
-final epargneProvider =
-    StateNotifierProvider<EpargneNotifier, EpargneState>((ref) {
+final epargneProvider = StateNotifierProvider<EpargneNotifier, EpargneState>((
+  ref,
+) {
   final epargneRepository = ref.read(epargneRepositoryProvider);
   return EpargneNotifier(epargneRepository);
 });
